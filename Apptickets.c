@@ -86,12 +86,13 @@ void PrioAsig() {
     printf("No se encontro ningun ticket con el id registrado.\n");
 }
 
-// muestra los tickets por id, prio, descripcion y la hora registro
+// muestra los tickets por id, prio, descripcion y la hora y fecha en la que se registro en el sistema
+
 void ShowTickets(Ticket* Ticket) {
     char Fecha[26];
-    struct tm* tm_info;
-    tm_info = localtime(&Ticket->Horallegada);
-    strftime(Fecha, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+    struct tm* timeinfo;
+    timeinfo = localtime(&Ticket->Horallegada);
+    strftime(Fecha, 26, "%Y-%m-%d %H:%M:%S", timeinfo);
     
     printf("ID ticket: %d\n", Ticket->id);
     
