@@ -3,10 +3,12 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-
+// creo una cola global con las prioridades
 typedef enum { ALTA = 2, MEDIA = 1, BAJA = 0 } Priority;
+
 List* cola[3];
 
+//estruct para los tickets que se ingresen y poder tener todo simplificado
 typedef struct {
     int id;
     Priority prioridad;
@@ -14,6 +16,7 @@ typedef struct {
     time_t Horallegada;
 } Ticket;
 
+//segun el caso de la prioridad este lo paso a text
 const char* PrioToText(Priority prio) {
     switch (prio) {
         case BAJA: return "BAJA";
@@ -26,12 +29,14 @@ const char* PrioToText(Priority prio) {
     }
 }
 
+// Ordena los tickets segun la hora a la que fueron registrados
 int HoraMenor(void* TicketA, void* TicketB) {
     Ticket* Ticket1 = (Ticket*) TicketA;
     Ticket* Ticket2 = (Ticket*) TicketB;
     return Ticket1->Horallegada < Ticket2->Horallegada;
 }
 
+// Sirve para registrar los tickets ingresando todos los datos necesarios
 void RegistrarT() {
     Ticket* ticketNew = (Ticket*)malloc(sizeof(Ticket));
     ticketNew->prioridad = BAJA;
@@ -50,21 +55,7 @@ void RegistrarT() {
     printf("Ticket registrado con una prioridad BAJA y la hora actual.\n");
 }
 
-void ShowTickets(Ticket* Ticket) {
-    char Fecha[26];
-    struct tm* tm_info;
-    tm_info = localtime(&Ticket->Horallegada);
-    strftime(Fecha, 26, "%Y-%m-%d %H:%M:%S", tm_info);
-    
-    printf("ID ticket: %d\n", Ticket->id);
-    
-    printf("Prioridad del ticket: %s\n", PrioToText(Ticket->prioridad));
-    
-    printf("Descripcion ticket: %s\n", Ticket->desc);
-    
-    printf("Hora de llegada del registro: %s\n", Fecha);
-}
-
+// Sirve para cambiar la prioridad de asignacion del ticket buscandolo por su id
 void PrioAsig() {
     int idTicket, nuevaPrio;
     printf("Ingrese el ID del ticket: ");
@@ -95,6 +86,24 @@ void PrioAsig() {
     printf("No se encontro ningun ticket con el id registrado.\n");
 }
 
+// muestra los tickets por id, prio, descripcion y la hora registro
+void ShowTickets(Ticket* Ticket) {
+    char Fecha[26];
+    struct tm* tm_info;
+    tm_info = localtime(&Ticket->Horallegada);
+    strftime(Fecha, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+    
+    printf("ID ticket: %d\n", Ticket->id);
+    
+    printf("Prioridad del ticket: %s\n", PrioToText(Ticket->prioridad));
+    
+    printf("Descripcion ticket: %s\n", Ticket->desc);
+    
+    printf("Hora del registro: %s\n", Fecha);
+}
+
+// muestra los tickets pendientes que aun no se procesan
+
 void TicketPend() {
     int TicketsPe = 0;
     for (int i = 2; i >= 0; i--) {
@@ -112,6 +121,7 @@ void TicketPend() {
     if (!TicketsPe) printf("No se encuentran tickets pendientes.\n");
 }
 
+// avanza al siguiente ticket para procesar
 void SigTicket() {
     for (int i = 2; i >= 0; i--) {
         Ticket* ticket = (Ticket*)firstList(cola[i]);
@@ -125,6 +135,8 @@ void SigTicket() {
     }
     printf("No hay tickets pendientes por procesar.\n");
 }
+
+// me permite buscar el ticket segun su id
 void buscarTicket() {
     int idTicket;
     printf("Ingrese el ID del ticket a buscar: ");
@@ -145,6 +157,7 @@ void buscarTicket() {
     printf("No se encontro ningun ticket pendiente con el ID registrado.\n");
 }
 
+//Muestra el menu como una funcion para simplificar el main
 void showMenu(){
     printf("\n Menu principal \n");
     printf("Presione 1 para registrar el ticket\n");
@@ -155,6 +168,8 @@ void showMenu(){
     printf("Precione 6 para cerrar el programa\n");
     printf("Que deseas realizar?: ");
 }
+
+// codigo principal donde se ejecutan todas las funciones anterior mencionadas
 
 int main() {
     for (int i = 0; i < 3; i++) {
